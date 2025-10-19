@@ -138,54 +138,78 @@ function createSmallDiya(scale = 0.3) {
 // Add multiple small diyas around the scene
 const smallDiyas = []
 const diyaPositions = [
-  { x: -6, y: 3, z: -3 },
-  { x: 6, y: 3, z: -3 },
-  { x: -7, y: 0, z: 2 },
-  { x: 7, y: 0, z: 2 },
-  { x: -5, y: -2, z: 5 },
-  { x: 5, y: -2, z: 5 },
-  { x: 0, y: 4, z: -5 },
-  { x: -3, y: 1, z: -6 },
-  { x: 3, y: 1, z: -6 }
+  // Top row (above form)
+  { x: -6, y: 4, z: -3, scale: 0.3 },
+  { x: 0, y: 5, z: -4, scale: 0.25 },
+  { x: 6, y: 4, z: -3, scale: 0.3 },
+  
+  // Middle row (sides of form)
+  { x: -8, y: 1, z: 0, scale: 0.35 },
+  { x: 8, y: 1, z: 0, scale: 0.35 },
+  { x: -7, y: 0, z: 3, scale: 0.28 },
+  { x: 7, y: 0, z: 3, scale: 0.28 },
+  
+  // Bottom row (below form)
+  { x: -5, y: -2, z: 5, scale: 0.32 },
+  { x: 0, y: -3, z: 6, scale: 0.3 },
+  { x: 5, y: -2, z: 5, scale: 0.32 },
+  
+  // Back corners
+  { x: -4, y: 2, z: -6, scale: 0.22 },
+  { x: 4, y: 2, z: -6, scale: 0.22 },
+  
+  // Extra decorative diyas
+  { x: -9, y: -1, z: 1, scale: 0.25 },
+  { x: 9, y: -1, z: 1, scale: 0.25 },
+  { x: -3, y: 3.5, z: -2, scale: 0.2 },
+  { x: 3, y: 3.5, z: -2, scale: 0.2 }
 ]
 
-diyaPositions.forEach(pos => {
-  const smallDiya = createSmallDiya(0.25)
+diyaPositions.forEach((pos, index) => {
+  const smallDiya = createSmallDiya(pos.scale)
   smallDiya.position.set(pos.x, pos.y, pos.z)
   smallDiya.rotation.y = Math.random() * Math.PI * 2
+  
+  // Store initial position and random movement params
+  smallDiya.userData.initialY = pos.y
+  smallDiya.userData.floatSpeed = 0.5 + Math.random() * 0.5
+  smallDiya.userData.floatAmount = 0.3 + Math.random() * 0.4
+  smallDiya.userData.rotationSpeed = 0.05 + Math.random() * 0.1
+  smallDiya.userData.offset = index * 0.5
+  
   scene.add(smallDiya)
   smallDiyas.push(smallDiya)
 })
 
-/=
-
+// ===== FLOATING PARTICLES (Reduced) =====
+const particlesGeometry = new THREE.BufferGeometry()
 const particlesCount = 100
-const positions = new Float32Ar)
-3)
+const positions = new Float32Array(particlesCount * 3)
+const colors = new Float32Array(particlesCount * 3)
 
-for (let i = 0; i < particlesCount * 3; i += {
-  
-  positions[i + 1] = Ma
-  positions[i + 2] = (Math.random() - 0.5) 20
+for (let i = 0; i < particlesCount * 3; i += 3) {
+  positions[i] = (Math.random() - 0.5) * 20
+  positions[i + 1] = Math.random() * 10
+  positions[i + 2] = (Math.random() - 0.5) * 20
   
   colors[i] = 1
   colors[i + 1] = Math.random() * 0.5 + 0.5
   colors[i + 2] = Math.random() * 0.3
 }
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posi))
-particlesGeometry.setAttribute('color', new 
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
 
 const particlesMaterial = new THREE.PointsMaterial({
-  si
+  size: 0.08,
   vertexColors: true,
   transparent: true,
   opacity: 0.6,
-  bleding
+  blending: THREE.AdditiveBlending
 })
 
-co
-scene.add(particles)rial)articlesMateometry, psGes(particleREE.Points = new THparticlenst dditiveBlen: THREE.Anding.08,ze: 0lors, 3))ttribute(coufferATHREE.Btions, 3 *10) * ndom(th.ra) * 20) - 0.5ndom(th.ra = (Maitions[i]pos 3)clesCount * rray(partinew Float32Aors = st colcon* 3Count (particlesrayerGeometry() THREE.Buffewmetry = nparticlesGeoconst educed) ====LES (RARTICNG P==== FLOATI/ =
+const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+scene.add(particles)
 
 // ===== ANIMATION LOOP =====
 const clock = new THREE.Clock()
@@ -200,17 +224,30 @@ function animate() {
   flame.scale.y = 1 + Math.sin(elapsedTime * 10) * 0.1
   flameLight.intensity = 3 + Math.sin(elapsedTime * 10) * 0.5
   
-  // Animate small diyas
+  // Animate small diyas with floating and rotation
   smallDiyas.forEach((diya, index) => {
-    // Gentle rotation
-    diya.rotation.y = elapsedTime * 0.1 + index
+    // Smooth rotation
+    diya.rotation.y += diya.userData.rotationSpeed * 0.02
     
-    // Flickering flames
+    // Floating up and down
+    const floatOffset = diya.userData.offset
+    const floatSpeed = diya.userData.floatSpeed
+    const floatAmount = diya.userData.floatAmount
+    diya.position.y = diya.userData.initialY + Math.sin(elapsedTime * floatSpeed + floatOffset) * floatAmount
+    
+    // Slight side-to-side sway
+    diya.position.x += Math.sin(elapsedTime * 0.3 + index) * 0.002
+    
+    // Flickering flames with variation
     if (diya.userData.flame) {
-      diya.userData.flame.scale.y = 1 + Math.sin(elapsedTime * 8 + index) * 0.15
+      const flameFlicker = Math.sin(elapsedTime * 8 + index * 0.7) * 0.15
+      diya.userData.flame.scale.y = 1 + flameFlicker
+      diya.userData.flame.scale.x = 1 + flameFlicker * 0.5
     }
+    
+    // Pulsing light intensity
     if (diya.userData.light) {
-      diya.userData.light.intensity = 0.8 + Math.sin(elapsedTime * 8 + index) * 0.3
+      diya.userData.light.intensity = 0.8 + Math.sin(elapsedTime * 6 + index * 0.5) * 0.4
     }
   })
   
