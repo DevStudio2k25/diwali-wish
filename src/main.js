@@ -84,37 +84,108 @@ diyaGroup.add(flameLight)
 diyaGroup.position.y = -1
 scene.add(diyaGroup)
 
-// ===== FLOATING PARTICLES =====
-const particlesGeometry = new THREE.BufferGeometry()
-const particlesCount = 200
-const positions = new Float32Array(particlesCount * 3)
-const colors = new Float32Array(particlesCount * 3)
-
-for (let i = 0; i < particlesCount * 3; i += 3) {
-  // Random positions in a sphere around the scene
-  positions[i] = (Math.random() - 0.5) * 20
-  positions[i + 1] = Math.random() * 10
-  positions[i + 2] = (Math.random() - 0.5) * 20
+// ===== CREATE MULTIPLE SMALL DIYAS =====
+function createSmallDiya(scale = 0.3) {
+  const smallDiyaGroup = new THREE.Group()
   
-  // Golden/orange colors
+  // Base
+  const baseGeo = new THREE.TorusGeometry(0.8 * scale, 0.3 * scale, 16, 32)
+  const baseMat = new THREE.MeshStandardMaterial({
+    color: 0xd4af37,
+    metalness: 0.7,
+    roughness: 0.3
+  })
+  const base = new THREE.Mesh(baseGeo, baseMat)
+  base.rotation.x = Math.PI / 2
+  base.castShadow = true
+  smallDiyaGroup.add(base)
+  
+  // Bowl
+  const bowlGeo = new THREE.SphereGeometry(0.6 * scale, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2)
+  const bowlMat = new THREE.MeshStandardMaterial({
+    color: 0xffd700,
+    metalness: 0.6,
+    roughness: 0.4
+  })
+  const bowl = new THREE.Mesh(bowlGeo, bowlMat)
+  bowl.position.y = 0.3 * scale
+  bowl.castShadow = true
+  smallDiyaGroup.add(bowl)
+  
+  // Flame
+  const flameGeo = new THREE.ConeGeometry(0.15 * scale, 0.6 * scale, 8)
+  const flameMat = new THREE.MeshStandardMaterial({
+    color: 0xffeb3b,
+    emissive: 0xff6b00,
+    emissiveIntensity: 2
+  })
+  const smallFlame = new THREE.Mesh(flameGeo, flameMat)
+  smallFlame.position.y = 1 * scale
+  smallDiyaGroup.add(smallFlame)
+  
+  // Light
+  const light = new THREE.PointLight(0xff6b00, 1 * scale, 5)
+  light.position.set(0, 1.2 * scale, 0)
+  smallDiyaGroup.add(light)
+  
+  // Store flame reference for animation
+  smallDiyaGroup.userData.flame = smallFlame
+  smallDiyaGroup.userData.light = light
+  
+  return smallDiyaGroup
+}
+
+// Add multiple small diyas around the scene
+const smallDiyas = []
+const diyaPositions = [
+  { x: -6, y: 3, z: -3 },
+  { x: 6, y: 3, z: -3 },
+  { x: -7, y: 0, z: 2 },
+  { x: 7, y: 0, z: 2 },
+  { x: -5, y: -2, z: 5 },
+  { x: 5, y: -2, z: 5 },
+  { x: 0, y: 4, z: -5 },
+  { x: -3, y: 1, z: -6 },
+  { x: 3, y: 1, z: -6 }
+]
+
+diyaPositions.forEach(pos => {
+  const smallDiya = createSmallDiya(0.25)
+  smallDiya.position.set(pos.x, pos.y, pos.z)
+  smallDiya.rotation.y = Math.random() * Math.PI * 2
+  scene.add(smallDiya)
+  smallDiyas.push(smallDiya)
+})
+
+/=
+
+const particlesCount = 100
+const positions = new Float32Ar)
+3)
+
+for (let i = 0; i < particlesCount * 3; i += {
+  
+  positions[i + 1] = Ma
+  positions[i + 2] = (Math.random() - 0.5) 20
+  
   colors[i] = 1
   colors[i + 1] = Math.random() * 0.5 + 0.5
   colors[i + 2] = Math.random() * 0.3
 }
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posi))
+particlesGeometry.setAttribute('color', new 
 
 const particlesMaterial = new THREE.PointsMaterial({
-  size: 0.1,
+  si
   vertexColors: true,
   transparent: true,
-  opacity: 0.8,
-  blending: THREE.AdditiveBlending
+  opacity: 0.6,
+  bleding
 })
 
-const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-scene.add(particles)
+co
+scene.add(particles)rial)articlesMateometry, psGes(particleREE.Points = new THparticlenst dditiveBlen: THREE.Anding.08,ze: 0lors, 3))ttribute(coufferATHREE.Btions, 3 *10) * ndom(th.ra) * 20) - 0.5ndom(th.ra = (Maitions[i]pos 3)clesCount * rray(partinew Float32Aors = st colcon* 3Count (particlesrayerGeometry() THREE.Buffewmetry = nparticlesGeoconst educed) ====LES (RARTICNG P==== FLOATI/ =
 
 // ===== ANIMATION LOOP =====
 const clock = new THREE.Clock()
@@ -122,12 +193,26 @@ const clock = new THREE.Clock()
 function animate() {
   const elapsedTime = clock.getElapsedTime()
   
-  // Rotate diya slowly
+  // Rotate main diya slowly
   diyaGroup.rotation.y = elapsedTime * 0.2
   
-  // Flickering flame effect
+  // Flickering flame effect for main diya
   flame.scale.y = 1 + Math.sin(elapsedTime * 10) * 0.1
   flameLight.intensity = 3 + Math.sin(elapsedTime * 10) * 0.5
+  
+  // Animate small diyas
+  smallDiyas.forEach((diya, index) => {
+    // Gentle rotation
+    diya.rotation.y = elapsedTime * 0.1 + index
+    
+    // Flickering flames
+    if (diya.userData.flame) {
+      diya.userData.flame.scale.y = 1 + Math.sin(elapsedTime * 8 + index) * 0.15
+    }
+    if (diya.userData.light) {
+      diya.userData.light.intensity = 0.8 + Math.sin(elapsedTime * 8 + index) * 0.3
+    }
+  })
   
   // Floating particles
   const particlesPositions = particles.geometry.attributes.position.array
