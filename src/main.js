@@ -270,29 +270,6 @@ shareWhatsAppBtn.addEventListener('click', () => {
   window.open(whatsappURL, '_blank')
 })
 
-// ===== MUSIC TOGGLE =====
-const musicToggle = document.getElementById('music-toggle')
-const musicIcon = document.getElementById('music-icon')
-let isPlaying = false
-
-// Create audio element (using a royalty-free ambient sound URL)
-const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3')
-audio.loop = true
-audio.volume = 0.3
-
-musicToggle.addEventListener('click', () => {
-  if (isPlaying) {
-    audio.pause()
-    musicIcon.textContent = '🔇'
-  } else {
-    audio.play().catch(err => {
-      console.log('Audio play failed:', err)
-    })
-    musicIcon.textContent = '🔊'
-  }
-  isPlaying = !isPlaying
-})
-
 // Initialize greeting on page load
 updateGreeting()
 
