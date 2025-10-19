@@ -295,3 +295,24 @@ musicToggle.addEventListener('click', () => {
 
 // Initialize greeting on page load
 updateGreeting()
+
+// ===== WELCOME POPUP LOGIC =====
+const welcomePopup = document.getElementById('welcome-popup')
+const closePopupBtn = document.getElementById('close-popup')
+
+// Check if user has visited before
+const hasVisited = localStorage.getItem('hasVisitedDiwaliSite')
+
+if (!hasVisited) {
+  // Show popup for first-time visitors
+  welcomePopup.classList.remove('hidden')
+} else {
+  // Hide popup for returning visitors
+  welcomePopup.classList.add('hidden')
+}
+
+// Close popup and mark as visited
+closePopupBtn.addEventListener('click', () => {
+  welcomePopup.classList.add('hidden')
+  localStorage.setItem('hasVisitedDiwaliSite', 'true')
+})
