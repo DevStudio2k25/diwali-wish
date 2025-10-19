@@ -2,6 +2,14 @@
 
 A beautiful, interactive 3D Diwali greeting website built with Vite, Vanilla JavaScript, and Three.js.
 
+## 🌐 Live Demo
+
+**🔗 [https://devstudio2k25.github.io/diwali-wish/](https://devstudio2k25.github.io/diwali-wish/)**
+
+Try it now:
+- [English Greeting](https://devstudio2k25.github.io/diwali-wish/?n=Rahul&lang=english)
+- [Hindi Greeting](https://devstudio2k25.github.io/diwali-wish/?n=राहुल&lang=hindi)
+
 ## ✨ Features
 
 - **3D Animated Diya** - Glowing diya with flickering flame effect (supports custom 3D models!)
@@ -30,8 +38,8 @@ npm run dev
 Visit `http://localhost:5173` in your browser.
 
 ### Test Personalized Link
-Try: `http://localhost:5173/?to=Anni&from=Rahul&lang=english`
-Or Hindi: `http://localhost:5173/?to=अन्नी&from=राहुल&lang=hindi`
+Try: `http://localhost:5173/?n=Rahul&lang=english`
+Or Hindi: `http://localhost:5173/?n=राहुल&lang=hindi`
 
 ## 📦 Build for Production
 
@@ -110,12 +118,29 @@ Edit Three.js setup in `src/main.js`:
 
 1. **View Greeting**: Open the site to see the default greeting
 2. **Create Personal Link**: 
-   - Enter YOUR name (From)
-   - Enter RECEIVER's name (To)
+   - Enter YOUR name
    - Select language (Hindi or English)
    - Click "Generate My Link"
+   - Link copied automatically!
 3. **Share**: Use Twitter or WhatsApp buttons to share
 4. **Music**: Click the music toggle button to play/pause ambient sound
+
+## 🎨 Lightweight Diya Styles
+
+No need to download heavy 3D models! We have **4 procedural diya styles** built with code:
+
+- 🪔 **Traditional** - Classic golden diya (default)
+- 🌸 **Lotus** - Beautiful flower-shaped diya
+- ⭐ **Star** - Festive 5-pointed star diya
+- 🔷 **Modern** - Contemporary hexagonal design
+
+**📖 See `EASY_DIYA_SWITCH.md` for copy-paste ready code!**
+
+All styles are:
+- ✅ Super lightweight (few KB)
+- ✅ Instant loading
+- ✅ Fully customizable colors
+- ✅ No downloads needed!
 
 ## 🎨 Add Custom 3D Models
 
