@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: '/diwali-wish/',
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
