@@ -142,24 +142,9 @@ body {
   margin-bottom: 1rem;
 }
 
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 1rem;
-  font-size: 1.2rem;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.7;
-}
-
 #name-input {
   width: 100%;
-  padding: 0.9rem 1.2rem 0.9rem 3rem;
+  padding: 0.9rem 1.2rem;
   border: 2px solid rgba(255, 215, 0, 0.3);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
@@ -174,12 +159,6 @@ body {
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
   background: rgba(255, 255, 255, 0.15);
   transform: scale(1.01);
-}
-
-#name-input:focus + .input-icon,
-.input-wrapper:has(#name-input:focus) .input-icon {
-  opacity: 1;
-  transform: scale(1.1);
 }
 
 #name-input::placeholder {
