@@ -342,7 +342,8 @@ generateBtn.addEventListener('click', () => {
   const selectedLanguage = document.querySelector('input[name="language"]:checked').value
   
   if (!name) {
-    alert('कृपया अपना नाम भरें! / Please enter your name!')
+    showCustomAlert('कृपया अपना नाम भरें! 🪔\nPlease enter your name! 🪔')
+    nameInput.focus()
     return
   }
   
@@ -363,7 +364,7 @@ generateBtn.addEventListener('click', () => {
     }, 3000)
   }).catch(err => {
     console.error('Failed to copy:', err)
-    alert('Failed to copy link. Please copy manually.')
+    showCustomAlert('लिंक कॉपी नहीं हो सका। कृपया मैन्युअली कॉपी करें।\nFailed to copy link. Please copy manually.')
   })
 })
 
@@ -377,20 +378,124 @@ generatedLinkInput.addEventListener('click', function() {
 const shareTwitterBtn = document.getElementById('share-twitter')
 const shareWhatsAppBtn = document.getElementById('share-whatsapp')
 
+// Function to get current link with name
+function getCurrentShareLink() {
+  const name = nameInput.value.trim()
+  const selectedLanguage = document.querySelector('input[name="language"]:checked').value
+  
+  if (!name) {
+    return null
+  }
+  
+  const baseURL = window.location.origin + window.location.pathname
+  return `${baseURL}?n=${encodeURIComponent(name)}&lang=${selectedLanguage}`
+}
+
 shareTwitterBtn.addEventListener('click', () => {
-  const params = getParamsFromURL()
-  const text = `✨ Happy Diwali! 🪔 ${params.name ? `From ${params.name} - ` : ''}Wishing you light, love, and prosperity! Check out this beautiful greeting:`
-  const url = window.location.href
-  const twitterURL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+  const shareLink = getCurrentShareLink()
+  
+  if (!shareLink) {
+    showCustomAlert('कृपया पहले अपना नाम भरें! 🪔\nPlease enter your name first! 🪔')
+    nameInput.focus()
+    return
+  }
+  
+  const name = nameInput.value.trim()
+  const text = `✨ Happy Diwali from ${name}! 🪔\n\nWishing you light, love, and prosperity!\n\n🎥 Subscribe: https://www.youtube.com/@DevStudio-2k25`
+  const twitterURL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareLink)}`
   window.open(twitterURL, '_blank')
 })
 
 shareWhatsAppBtn.addEventListener('click', () => {
-  const params = getParamsFromURL()
-  const text = `✨ Happy Diwali! 🪔 ${params.name ? `From ${params.name} - ` : ''}Wishing you light, love, and prosperity! ${window.location.href}`
+  const shareLink = getCurrentShareLink()
+  
+  if (!shareLink) {
+    showCustomAlert('कृपया पहले अपना नाम भरें! 🪔\nPlease enter your name first! 🪔')
+    nameInput.focus()
+    return
+  }
+  
+  const name = nameInput.value.trim()
+  const text = `✨ *Happy Diwali from ${name}!* 🪔\n\nWishing you light, love, and prosperity!\n\n🎁 Your personalized greeting:\n${shareLink}\n\n🎥 Subscribe to DevStudio 2k25:\nhttps://www.youtube.com/@DevStudio-2k25`
   const whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`
   window.open(whatsappURL, '_blank')
 })
+
+// Facebook share
+const shareFacebookBtn = document.getElementById('share-facebook')
+shareFacebookBtn.addEventListener('click', () => {
+  const shareLink = getCurrentShareLink()
+  
+  if (!shareLink) {
+    showCustomAlert('कृपया पहले अपना नाम भरें! 🪔\nPlease enter your name first! 🪔')
+    nameInput.focus()
+    return
+  }
+  
+  const facebookURL = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`
+  window.open(facebookURL, '_blank')
+})
+
+// Telegram share
+const shareTelegramBtn = document.getElementById('share-telegram')
+shareTelegramBtn.addEventListener('click', () => {
+  const shareLink = getCurrentShareLink()
+  
+  if (!shareLink) {
+    showCustomAlert('कृपया पहले अपना नाम भरें! 🪔\nPlease enter your name first! 🪔')
+    nameInput.focus()
+    return
+  }
+  
+  const name = nameInput.value.trim()
+  const text = `✨ Happy Diwali from ${name}! 🪔\n\nWishing you light, love, and prosperity!\n\n🎥 Subscribe: https://www.youtube.com/@DevStudio-2k25`
+  const telegramURL = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`
+  window.open(telegramURL, '_blank')
+})
+
+// LinkedIn share
+const shareLinkedInBtn = document.getElementById('share-linkedin')
+shareLinkedInBtn.addEventListener('click', () => {
+  const shareLink = getCurrentShareLink()
+  
+  if (!shareLink) {
+    showCustomAlert('कृपया पहले अपना नाम भरें! 🪔\nPlease enter your name first! 🪔')
+    nameInput.focus()
+    return
+  }
+  
+  const linkedinURL = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareLink)}`
+  window.open(linkedinURL, '_blank')
+})
+
+// Custom alert function
+function showCustomAlert(message) {
+  // Create custom alert overlay
+  const alertOverlay = document.createElement('div')
+  alertOverlay.className = 'custom-alert-overlay'
+  alertOverlay.innerHTML = `
+    <div class="custom-alert-box">
+      <div class="custom-alert-icon">🪔</div>
+      <div class="custom-alert-message">${message.replace(/\n/g, '<br>')}</div>
+      <button class="custom-alert-btn">OK</button>
+    </div>
+  `
+  
+  document.body.appendChild(alertOverlay)
+  
+  // Close on button click
+  const closeBtn = alertOverlay.querySelector('.custom-alert-btn')
+  closeBtn.addEventListener('click', () => {
+    alertOverlay.remove()
+  })
+  
+  // Close on overlay click
+  alertOverlay.addEventListener('click', (e) => {
+    if (e.target === alertOverlay) {
+      alertOverlay.remove()
+    }
+  })
+}
 
 // Initialize greeting on page load
 updateGreeting()
